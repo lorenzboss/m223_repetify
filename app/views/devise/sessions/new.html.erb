@@ -13,7 +13,7 @@
           <div class="login-flash-messages">
             <!-- Flash-Messages für Authentifizierungsfehler -->
             <% flash.each do |type, message| %>
-              <% unless message == "You need to sign in or sign up before continuing." %>
+              <% unless message == "You need to sign in or sign up before continuing." || message.include?("gesperrt") || message.include?("suspended") %>
                 <% if type == 'alert' %>
                   <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="bi bi-exclamation-triangle me-2"></i>

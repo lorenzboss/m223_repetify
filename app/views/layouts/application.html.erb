@@ -31,8 +31,13 @@
     <% end %>
     <% if user_signed_in? %>
       <div class="d-flex align-items-center gap-3">
+        <% if current_user.admin? %>
+          <%= link_to admin_index_path, class: "btn btn-outline-light btn-sm" do %>
+            <i class="bi bi-shield-check me-1"></i><span class="d-none d-sm-inline">Admin</span>
+          <% end %>
+        <% end %>
         <span class="navbar-text text-truncate ">
-          <i class="bi bi-perso n-circle me-1"></i>
+          <i class="bi bi-person-circle me-1"></i>
            <%= current_user.email %>
         </span>
       <%= link_to destroy_user_session_path,

@@ -1,0 +1,306 @@
+<!-- app/views/admin/index.html.erb -->
+<div class="container-fluid py-4">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-shield-check me-2 text-primary"></i>
+            Administrator Dashboard
+          </h1>
+          <p class="text-muted mb-0">Benutzer- und Systemverwaltung</p>
+        </div>
+        <div class="text-muted">
+          <i class="bi bi-calendar me-1"></i>
+          <%= Date.current.strftime("%d.%m.%Y") %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-primary shadow h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                Benutzer Gesamt
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <%= @stats[:total_users] %>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-people-fill fa-2x text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-success shadow h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                Aktive Benutzer
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <%= @stats[:active_users] %>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-person-check-fill fa-2x text-success"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-warning shadow h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                Gesperrte Benutzer
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <%= @stats[:suspended_users] %>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-person-x-fill fa-2x text-warning"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-info shadow h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                Administratoren
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <%= @stats[:admin_users] %>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-shield-fill-check fa-2x text-info"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">
+        <i class="bi bi-table me-2"></i>
+        Benutzerverwaltung
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">
+                <i class="bi bi-envelope me-1"></i>
+                E-Mail
+              </th>
+              <th scope="col">
+                <i class="bi bi-shield me-1"></i>
+                Rolle
+              </th>
+              <th scope="col">
+                <i class="bi bi-activity me-1"></i>
+                Status
+              </th>
+              <th scope="col">
+                <i class="bi bi-calendar-date me-1"></i>
+                Registriert
+              </th>
+              <th scope="col" class="text-center">
+                <i class="bi bi-gear me-1"></i>
+                Aktionen
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr class="<%= 'table-warning' if user.suspended? %>">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <% if user.admin? %>
+                      <i class="bi bi-shield-fill-check text-primary me-2"></i>
+                    <% elsif user.suspended? %>
+                      <i class="bi bi-person-x-fill text-warning me-2"></i>
+                    <% else %>
+                      <i class="bi bi-person-fill text-success me-2"></i>
+                    <% end %>
+                    <%= user.email %>
+                    <% if user == current_user %>
+                      <span class="badge bg-info ms-2">Du</span>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <% if user.admin? %>
+                    <span class="badge bg-primary">
+                      <i class="bi bi-shield-check me-1"></i>
+                      Administrator
+                    </span>
+                  <% else %>
+                    <span class="badge bg-secondary">
+                      <i class="bi bi-person me-1"></i>
+                      Benutzer
+                    </span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if user.suspended? %>
+                    <span class="badge bg-warning">
+                      <i class="bi bi-lock-fill me-1"></i>
+                      Gesperrt
+                    </span>
+                  <% else %>
+                    <span class="badge bg-success">
+                      <i class="bi bi-check-circle-fill me-1"></i>
+                      Aktiv
+                    </span>
+                  <% end %>
+                </td>
+                <td>
+                  <small class="text-muted">
+                    <%= user.created_at.strftime("%d.%m.%Y um %H:%M") %>
+                  </small>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <% unless user == current_user %>
+                      <!-- Admin Toggle -->
+                      <% if user.admin? %>
+                        <%= link_to remove_admin_user_admin_index_path(user),
+                            class: "btn btn-outline-warning btn-sm",
+                            data: {
+                              turbo_method: :patch,
+                              confirm: "Admin-Rechte von #{user.email} entziehen?"
+                            },
+                            title: "Admin-Rechte entziehen" do %>
+                          <i class="bi bi-shield-x"></i>
+                        <% end %>
+                      <% else %>
+                        <%= link_to make_admin_user_admin_index_path(user),
+                            class: "btn btn-outline-primary btn-sm",
+                            data: {
+                              turbo_method: :patch,
+                              confirm: "#{user.email} zum Administrator machen?"
+                            },
+                            title: "Zum Administrator machen" do %>
+                          <i class="bi bi-shield-plus"></i>
+                        <% end %>
+                      <% end %>
+
+                      <!-- Suspend Toggle -->
+                      <% if user.suspended? %>
+                        <%= link_to unsuspend_user_admin_index_path(user),
+                            class: "btn btn-outline-success btn-sm",
+                            data: {
+                              turbo_method: :patch,
+                              confirm: "#{user.email} entsperren?"
+                            },
+                            title: "Entsperren" do %>
+                          <i class="bi bi-unlock"></i>
+                        <% end %>
+                      <% else %>
+                        <%= link_to suspend_user_admin_index_path(user),
+                            class: "btn btn-outline-warning btn-sm",
+                            data: {
+                              turbo_method: :patch,
+                              confirm: "#{user.email} sperren?"
+                            },
+                            title: "Sperren" do %>
+                          <i class="bi bi-lock"></i>
+                        <% end %>
+                      <% end %>
+
+                      <!-- Delete -->
+                      <%= link_to delete_user_admin_index_path(user),
+                          class: "btn btn-outline-danger btn-sm",
+                          data: {
+                            turbo_method: :delete,
+                            confirm: "#{user.email} endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
+                          },
+                          title: "Löschen" do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
+                    <% else %>
+                      <span class="text-muted small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Eigenes Konto
+                      </span>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styles for Admin Dashboard -->
+<style>
+  .border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+  }
+
+  .border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+  }
+
+  .border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+  }
+
+  .border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+  }
+
+  .text-xs {
+    font-size: .7rem;
+  }
+
+  .fa-2x {
+    font-size: 2em;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.05);
+  }
+
+  .badge {
+    font-size: 0.75em;
+  }
+
+  .btn-group .btn {
+    margin-right: 2px;
+  }
+
+  .btn-group .btn:last-child {
+    margin-right: 0;
+  }
+</style>

@@ -1,0 +1,59 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    width: 100%;
+}
+
+@media (max-width: 400px) {
+    .repetify-word{
+        display: none;
+    }
+}
+
+.login-card-grid {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.login-card-header {
+    grid-row: 1;
+}
+
+.login-card-body {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 1.5rem;
+}
+
+.login-flash-messages {
+    grid-row: 1;
+}
+
+.login-form-area {
+    grid-row: 2;
+}
+
+.login-links-area {
+    grid-row: 3;
+}
+
+@media (max-width: 576px) {
+    .login-card-grid {
+        grid-template-rows: auto 1fr;
+    }
+    .login-card-body {
+        grid-template-rows: auto 1fr auto;
+        gap: 1rem;
+    }
+}

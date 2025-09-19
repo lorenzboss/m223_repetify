@@ -1,29 +1,77 @@
-<h2>Sign up</h2>
+<!-- app/views/devise/registrations/new.html.erb -->
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white text-center">
+          <h3 class="mb-0">
+            <i class="bi bi-person-plus me-2"></i>
+            Bei Repetify registrieren
+          </h3>
+        </div>
+        <div class="card-body p-4">
+          <%= form_with(model: resource, as: resource_name, url: registration_path(resource_name), local: true) do |form| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+            <div class="mb-3">
+              <%= form.label :email, "E-Mail Adresse", class: "form-label" %>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <%= form.email_field :email,
+                  autofocus: true,
+                  autocomplete: "email",
+                  class: "form-control",
+                  placeholder: "deine@email.com",
+                  required: true %>
+              </div>
+            </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+            <div class="mb-3">
+              <%= form.label :password, "Passwort", class: "form-label" %>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-lock"></i>
+                </span>
+                <%= form.password_field :password,
+                  autocomplete: "new-password",
+                  class: "form-control",
+                    placeholder: "Mindestens 6 Zeichen",
+                required: true %>
+              </div>
+              <% if @minimum_password_length %>
+                <div class="form-text">
+                  <small class="text-muted">Mindestens <%= @minimum_password_length %> Zeichen</small>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :password_confirmation, "Passwort bestätigen", class: "form-label" %>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-lock-fill"></i>
+                </span>
+                <%= form.password_field :password_confirmation,
+                  autocomplete: "new-password",
+                  class: "form-control",
+                  placeholder: "Passwort wiederholen",
+                  required: true %>
+              </div>
+            </div>
+
+            <div class="d-grid mb-3">
+              <%= form.submit "Account erstellen", class: "btn btn-success btn-lg" %>
+            </div>
+          <% end %>
+
+          <div class="text-center">
+            <%= link_to "Bereits registriert? Hier anmelden", new_user_session_path,
+              class: "btn btn-outline-primary" %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

@@ -1,24 +1,92 @@
-# README
+# Repetify - Dein Vokabeltrainer 📚
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Repetify ist ein moderner Vokabeltrainer, der mit Ruby on Rails entwickelt wurde.
+Eine Rails-Anwendung zum Lernen von Vokabeln mit Bootstrap-Design und Benutzerauthentifizierung.
 
-Things you may want to cover:
+## Tech Stack
 
-* Ruby version
+- Ruby on Rails 8
+- Bootstrap 5
+- Devise (Authentifizierung)
+- SCSS für eigene Styles
+- Postgres DB als Datenbank
 
-* System dependencies
+# 🚀 Lokale Installation
 
-* Configuration
+## 1. Repository klonen
 
-* Database creation
+```bash
+git clone https://github.com/lorenzboss/m223_repetify.git
+cd m223_repetify
+```
 
-* Database initialization
+## 2. Dependencies installieren
 
-* How to run the test suite
+```bash
+# Ruby Gems
+bundle install
 
-* Services (job queues, cache servers, search engines, etc.)
+# Node.js Dependencies (für CSS-Kompilierung)
+npm install
+```
 
-* Deployment instructions
+## 3. Master Key und Credentials einrichten
 
-* ...
+### Option A: Bestehende Dependencies übernehmen
+Stelle sicher, dass der Master-Key in der Datei `config/master.key` existiert und der Inhalt korrekt ist.
+
+### Option B: Eigene API-Keys verwenden
+Master Key generieren (falls nicht vorhanden)
+
+```bash
+rails credentials:edit
+```
+
+Füge deine eigenen Keys hinzu:
+
+```text
+neon:
+  database_url: postgresql://YOUR_DB_URL_HERE
+
+deepl:
+  api_key: YOUR_DEEPL_API_KEY_HERE
+```
+
+## 4. Datenbank-Schema und Seeds
+
+Falls du Postgres lokal installiert hast oder eine neue Datenbank erstellt hast:
+
+```bash
+rails db:migrate
+rails db:seed     
+```
+
+# 🏃‍♂️ Server starten
+
+### Development mit CSS-Watching:
+Startet Rails-Server und überwacht SCSS-Änderungen automatisch.
+
+```bash
+bin/dev
+```
+
+### Nur Rails-Server:
+
+```bash
+rails server
+```
+
+**SCSS-Änderungen übernehmen:** Wenn du nur `rails server` verwendest, musst du SCSS-Änderungen manuell kompilieren:
+
+```bash
+npm run build:css
+```
+
+**Anwendung läuft auf:** http://localhost:3000
+
+# 📁 Wichtige Dateien
+
+- `app/assets/stylesheets/app.scss` - Eigene SCSS-Styles
+- `app/views/layouts/application.html.erb` - Haupt-Layout
+- `config/routes.rb` - URL-Routing
+- `Procfile.dev` - Development-Prozesse

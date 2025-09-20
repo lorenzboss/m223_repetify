@@ -1,4 +1,4 @@
-# Repetify - Dein Vokabeltrainer 📚
+# 📚 Repetify - Learn words. Keep them forever.
 
 Repetify ist ein moderner Vokabeltrainer, der mit Ruby on Rails entwickelt wurde.
 Eine Rails-Anwendung zum Lernen von Vokabeln mit Bootstrap-Design und Benutzerauthentifizierung.
@@ -30,19 +30,21 @@ bundle install
 npm install
 ```
 
-## 3. Master Key und Credentials einrichten
+## 3. Master Key, Credentials und Datenbank einrichten
 
-### Option A: Bestehende Dependencies übernehmen
+### Option A: Bestehende Credentials verwenden
+
 Stelle sicher, dass der Master-Key in der Datei `config/master.key` existiert und der Inhalt korrekt ist.
 
-### Option B: Eigene API-Keys verwenden
-Master Key generieren (falls nicht vorhanden)
+### Option B: Eigene API-Keys und Datenbank verwenden
+
+Generiere einen neuen Master Key
 
 ```bash
 rails credentials:edit
 ```
 
-Füge deine eigenen Keys hinzu:
+Füge deine API-Keys und Datenbank-URL im geöffneten Editor hinzu:
 
 ```text
 neon:
@@ -52,18 +54,16 @@ deepl:
   api_key: YOUR_DEEPL_API_KEY_HERE
 ```
 
-## 4. Datenbank-Schema und Seeds
-
-Falls du Postgres lokal installiert hast oder eine neue Datenbank erstellt hast:
+Falls du die Datenbank neu erstellt hast, musst du sie migrieren:
 
 ```bash
 rails db:migrate
-rails db:seed     
 ```
 
 # 🏃‍♂️ Server starten
 
-### Development mit CSS-Watching:
+### Development mit CSS-Watching (empfohlen):
+
 Startet Rails-Server und überwacht SCSS-Änderungen automatisch.
 
 ```bash
@@ -71,6 +71,8 @@ bin/dev
 ```
 
 ### Nur Rails-Server:
+
+Startet nur den Rails-Server ohne SCSS-Watching.
 
 ```bash
 rails server

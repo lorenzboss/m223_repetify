@@ -7,20 +7,20 @@ default: &default
 
 development:
   <<: *default
-  url: <%= Rails.application.credentials.neon[:database_url] %>
+  url: <%= Rails.application.credentials.neon[:development_database_url] %>
 
 test:
   <<: *default
-  url: <%= Rails.application.credentials.neon[:database_url] %>
+  url: <%= Rails.application.credentials.neon[:development_database_url] %>
 
 production:
   <<: *default
-  url: <%= Rails.application.credentials.neon[:database_url] %>
+  url: <%= Rails.application.credentials.neon[:production_database_url] %>
 
 queue:
   <<: *default
-  url: <%= Rails.application.credentials.neon[:database_url] %>
+  url: <%= Rails.application.credentials.neon[:development_database_url] %>
 
 cache:
   <<: *default
-  url: <%= Rails.application.credentials.neon[:database_url] %>
+  url: <%= Rails.application.credentials.neon[:development_database_url] %>

@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   devise_for :users
   root "home#index"
 
+  # Translation route
+  post "/translate", to: "home#translate"
+
   # Admin routes
   resources :admin, only: [:index] do
     collection do

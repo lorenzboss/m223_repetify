@@ -1,25 +1,93 @@
 <!-- app/views/home/index.html.erb -->
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-lg-7">
-      <div class="card">
-        <div class="card-header">
-          <h1 class="text-center">Willkommen bei Repetify!</h1>
-        </div>
-        <div class="card-body">
-          <div class="alert alert-success" role="alert">
-            <h4 class="alert-heading">🎉 Authentication funktioniert!</h4>
-            <p>Du bist erfolgreich eingeloggt als: <strong><%= current_user.email %></strong></p>
-            <hr>
-            <p class="mb-0">
-              Hier wird später dein persönlicher Vokabeltrainer erscheinen.
-            </p>
+    <div class="col-lg-10">
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <h1 class="display-4 text-primary">Repetify</h1>
+        <p class="lead text-muted">Übersetze Wörter und baue deinen Wortschatz auf</p>
+      </div>
+
+      <!-- Translation Card -->
+      <div class="card shadow-lg border-0" data-controller="translation">
+        <div class="card-body p-4">
+          <!-- Language Selection -->
+          <div class="row mb-4">
+            <div class="col-md-5 col-lg-4">
+              <label for="source-language" class="form-label fw-bold text-muted mb-2">Quellsprache wählen:</label>
+              <select id="source-language" class="form-select" data-translation-target="sourceLanguage">
+                <option value="">Automatisch erkennen</option>
+                <option value="EN">Englisch</option>
+                <option value="FR">Französisch</option>
+                <option value="ES">Spanisch</option>
+                <option value="PT">Portugiesisch</option>
+                <option value="IT">Italienisch</option>
+              </select>
+            </div>
           </div>
 
-          <div class="text-center mt-4">
-            <%= link_to "Logout", destroy_user_session_path,
-              data: { "turbo-method": :delete },
-              class: "btn btn-outline-danger" %>
+          <hr class="mb-4">
+
+          <div class="row">
+            <!-- Input Side -->
+            <div class="col-md-6 translation-container">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-muted mb-0 fw-bold" data-translation-target="sourceLabel">Quelltext</h6>
+                <span class="badge bg-light text-dark" data-translation-target="sourceBadge">AUTO</span>
+              </div>
+              <div class="translation-input-container">
+                <%= text_area_tag :source_text, '',
+                  id: 'source-input',
+                  class: 'form-control translation-textarea',
+                  placeholder: 'Gib ein Wort oder einen Satz ein...',
+                  rows: 6,
+                  data: {
+                    translation_target: 'input'
+                  } %>
+                <div class="input-status mt-2">
+                  <small data-translation-target="inputStatus" class="text-muted"></small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Output Side (German) -->
+            <div class="col-md-6 translation-container">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-muted mb-0 fw-bold">Deutsch</h6>
+                <span class="badge bg-primary">DE</span>
+              </div>
+              <div class="translation-output-container">
+                <div data-translation-target="output" class="translation-result p-3 bg-light rounded">
+                  <div class="placeholder-content text-center text-muted">
+                    <i class="bi bi-translate" style="font-size: 2rem;"></i>
+                    <p class="mb-0 mt-2">Die Übersetzung wird hier erscheinen...</p>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <small data-translation-target="translationStatus" class="text-muted"></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <button id="clear-btn" class="btn btn-outline-secondary">
+                    <i class="bi bi-eraser me-1"></i>
+                    Löschen
+                  </button>
+                </div>
+                <div>
+                  <button data-translation-target="saveBtn" id="save-vocabulary-btn" class="btn btn-success" disabled>
+                    <i class="bi bi-floppy me-1"></i>
+                    Vokabel speichern
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

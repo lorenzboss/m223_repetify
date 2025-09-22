@@ -16,3 +16,11 @@ test:
 production:
   <<: *default
   url: <%= Rails.application.credentials.neon[:database_url] %>
+
+queue:
+  <<: *default
+  url: <%= Rails.application.credentials.neon[:database_url] %>
+
+cache:
+  <<: *default
+  url: <%= Rails.application.credentials.neon[:database_url] %>

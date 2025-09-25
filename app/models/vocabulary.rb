@@ -7,23 +7,38 @@ class Vocabulary < ApplicationRecord
   validates :source_language, presence: true, length: { maximum: 5 }
   validates :status, presence: true
 
-  # Status enum for vocabulary learning progress
+  # Status enum for vocabulary learning progress (English in DB)
   enum :status, {
-    offen: "offen",
-    am_lernen: "am_lernen",
-    gelernt: "gelernt"
+    open: "open",
+    learning: "learning",
+    learned: "learned"
   }
 
-  # Set default status
-  after_initialize :set_default_status
+  # Set default status and normalize source_language
+  after_initialize :set_defaults
+  before_save :normalize_source_language
 
   # Scopes
   scope :by_status, ->(status) { where(status: status) }
   scope :recent, -> { order(created_at: :desc) }
 
+  # Method to get German status display
+  def status_german
+    case status
+    when "open" then "Offen"
+    when "learning" then "Am Lernen"
+    when "learned" then "Gelernt"
+    else status
+    end
+  end
+
   private
 
-  def set_default_status
-    self.status ||= "offen"
+  def set_defaults
+    self.status ||= "open"
+  end
+
+  def normalize_source_language
+    self.source_language = source_language&.downcase
   end
 end

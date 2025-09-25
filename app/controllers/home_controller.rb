@@ -37,10 +37,13 @@ class HomeController < ApplicationController
     end
 
     begin
+      # Normalize source_language to lowercase for consistent storage
+      normalized_source_language = source_language.downcase
+
       # Check if vocabulary already exists for this user
       existing_vocabulary = current_user.vocabularies.find_by(
         source_text: source_text.strip,
-        source_language: source_language
+        source_language: normalized_source_language
       )
 
       if existing_vocabulary
@@ -55,7 +58,7 @@ class HomeController < ApplicationController
       vocabulary = current_user.vocabularies.create!(
         source_text: source_text.strip,
         target_text: target_text.strip,
-        source_language: source_language
+        source_language: normalized_source_language
       )
 
       render json: {

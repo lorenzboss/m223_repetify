@@ -112,7 +112,7 @@ export default class extends Controller {
             this.currentTranslation = {
                 source_text: text,
                 target_text: data.translated_text,
-                source_language: data.source_language || data.detected_language
+                source_language: (data.source_language || data.detected_language).toLowerCase()
             };
 
             this.displayTranslation(data);

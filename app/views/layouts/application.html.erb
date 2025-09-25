@@ -49,11 +49,14 @@
           <i class="bi bi-collection me-lg-1"></i><span class="d-none d-lg-inline">Lernen</span>
         <% end %>
         <%= link_to vocabularies_path, class: "btn btn-outline-light btn-sm" do %>
-          <i class="bi bi-highlighter me-lg-1"></i><span class="d-none d-lg-inline">Vokabeln</span>
+          <i class="bi bi-list-ul me-lg-1"></i><span class="d-none d-lg-inline">Vokabeln</span>
         <% end %>
         <% if current_user.admin? %>
           <%= link_to admin_index_path, class: "btn btn-outline-light btn-sm" do %>
             <i class="bi bi-shield-check me-lg-1"></i><span class="d-none d-lg-inline">Admin</span>
+          <% end %>
+          <%= link_to activity_log_admin_index_path, class: "btn btn-outline-light btn-sm" do %>
+            <i class="bi bi-clock-history me-lg-1"></i><span class="d-none d-lg-inline">Protokoll</span>
           <% end %>
         <% end %>
         <%= link_to destroy_user_session_path,

@@ -35,7 +35,7 @@
     <div class="card-body">
       <% if @versions.any? %>
         <div class="timeline">
-          <% @versions.each_with_index do |version, index| %>
+          <% @versions.each_with_index do |version, _| %>
             <div class="timeline-item mb-4">
               <!-- Content -->
               <div class="flex-grow-1">
@@ -178,41 +178,4 @@
     .btn-outline-primary:hover, .btn-outline-secondary:hover {
         transform: translateY(-1px);
     }
-
-    .text-success.fw-bold {
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
 </style>
-
-<script>
-    // Wait for turbo navigation and reinitialize Bootstrap collapse
-    document.addEventListener('turbo:load', function () {
-        // Find all collapse buttons and ensure they work with Bootstrap
-        const collapseButtons = document.querySelectorAll('[data-bs-toggle="collapse"]');
-
-        collapseButtons.forEach(button => {
-            button.addEventListener('click', function (e) {
-                // Let Bootstrap handle it, but ensure the target is properly initialized
-                const targetSelector = this.getAttribute('data-bs-target');
-                const target = document.querySelector(targetSelector);
-
-                if (target && typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-                    // Initialize Bootstrap Collapse if not already done
-                    let bsCollapse = bootstrap.Collapse.getInstance(target);
-                    if (!bsCollapse) {
-                        bsCollapse = new bootstrap.Collapse(target, {
-                            toggle: false
-                        });
-                    }
-
-                    // Toggle the collapse
-                    bsCollapse.toggle();
-
-                    // Prevent default to avoid double handling
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-        });
-    });
-</script>

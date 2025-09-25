@@ -56,17 +56,15 @@
                         <i class="bi bi-hash me-1"></i>
                         ID: <code><%= version.item_id %></code>
                       </small>
-                      <% if version.whodunnit %>
                         <small class="text-muted d-block">
                           <i class="bi bi-person me-1"></i>
                           <% user = User.find_by(id: version.whodunnit) %>
                           <% if user %>
                             <%= user.email %>
                           <% else %>
-                            Benutzer ID: <%= version.whodunnit %>
+                            SYSTEM
                           <% end %>
                         </small>
-                      <% end %>
                     </div>
 
                     <!-- Expandable sections for changes and object -->

@@ -5,6 +5,15 @@ class VocabulariesController < ApplicationController
   # Supported languages - ignore vocabularies with other languages
   SUPPORTED_LANGUAGES = %w[en fr es pt it].freeze
 
+  # Language display names mapping
+  LANGUAGE_NAMES = {
+    "en" => "Englisch",
+    "fr" => "Französisch",
+    "es" => "Spanisch",
+    "pt" => "Portugiesisch",
+    "it" => "Italienisch"
+  }.freeze
+
   def index
     # Get all vocabularies for current user, grouped by language
     # Only include supported languages
@@ -27,25 +36,13 @@ class VocabulariesController < ApplicationController
     end
 
     # Language display names
-    @language_names = {
-      "en" => "Englisch",
-      "fr" => "Französisch",
-      "es" => "Spanisch",
-      "pt" => "Portugiesisch",
-      "it" => "Italienisch"
-    }
+    @language_names = LANGUAGE_NAMES
   end
 
   def learn
     # Overview of learning progress by language
     @vocabularies_by_language = {}
-    @language_names = {
-      "en" => "Englisch",
-      "fr" => "Französisch",
-      "es" => "Spanisch",
-      "pt" => "Portugiesisch",
-      "it" => "Italienisch"
-    }
+    @language_names = LANGUAGE_NAMES
 
     SUPPORTED_LANGUAGES.each do |lang|
       vocabularies = current_user.vocabularies.where(source_language: lang)
@@ -65,13 +62,7 @@ class VocabulariesController < ApplicationController
     @language = params[:language]
     redirect_to learn_vocabularies_path, alert: "Ungültige Sprache." unless SUPPORTED_LANGUAGES.include?(@language)
 
-    @language_name = {
-      "en" => "Englisch",
-      "fr" => "Französisch",
-      "es" => "Spanisch",
-      "pt" => "Portugiesisch",
-      "it" => "Italienisch"
-    }[@language]
+    @language_name = LANGUAGE_NAMES[@language]
 
     # Get vocabularies to learn (open and learning status only)
     @vocabularies = current_user.vocabularies

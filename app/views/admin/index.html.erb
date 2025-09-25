@@ -187,7 +187,7 @@
                   </small>
                 </td>
                 <td class="text-center">
-                  <div class="btn-group" role="group">
+                  <div class="btn-group gap-1" role="group">
                     <% unless user == current_user %>
                       <!-- Admin Toggle -->
                       <% if user.admin? %>
@@ -290,13 +290,5 @@
 
   .badge {
     font-size: 0.75em;
-  }
-
-  .btn-group .btn {
-    margin-right: 2px;
-  }
-
-  .btn-group .btn:last-child {
-    margin-right: 0;
   }
 </style>

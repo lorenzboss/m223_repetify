@@ -17,10 +17,39 @@ module ApplicationHelper
   def render_raw_activity_changes(version)
     return "" unless version.object_changes.present?
 
-    # Remove only the first --- line if it exists
-    clean_content = version.object_changes.sub(/^---\s*\n/, "")
+    begin
+      changes = YAML.safe_load(
+        version.object_changes,
+        permitted_classes: [Time, Date, ActiveSupport::TimeWithZone, Symbol],
+        aliases: true
+      )
 
-    "<pre class=\"mb-0 p-2 bg-white border rounded\" style=\"font-size: 0.8rem; max-height: 300px; overflow-y: auto;\">#{CGI.escapeHTML(clean_content)}</pre>".html_safe
+      formatted_lines = changes.map do |field, values|
+        old_value = values[0].nil? ? "n/a" : values[0].to_s
+        new_value = values[1].nil? ? "n/a" : values[1].to_s
+
+        escaped_field = CGI.escapeHTML(field)
+        escaped_old = CGI.escapeHTML(old_value)
+        escaped_new = CGI.escapeHTML(new_value)
+
+        # Handle create and destroy cases where one value is nil
+        if version.event == "create"
+          "#{escaped_field}: #{escaped_new}"
+        elsif version.event == "destroy"
+          "#{escaped_field}: #{escaped_old}"
+        else # update
+          # Use an icon for the arrow, and don't escape the icon's HTML
+          "#{escaped_field}: #{escaped_old} <i class=\"bi bi-arrow-right\"></i> #{escaped_new}"
+        end
+      end
+
+      # Join with <br> for HTML line breaks and mark as safe
+      "<pre class=\"mb-0 p-2 bg-white border rounded\" style=\"font-size: 0.8rem; max-height: 300px; overflow-y: auto;\">#{formatted_lines.join('<br>')}</pre>".html_safe
+    rescue
+      # Fallback to old rendering if something goes wrong
+      clean_content = version.object_changes.sub(/^---\s*\n/, "")
+      "<pre class=\"mb-0 p-2 bg-white border rounded\" style=\"font-size: 0.8rem; max-height: 300px; overflow-y: auto;\">#{CGI.escapeHTML(clean_content)}</pre>".html_safe
+    end
   end
 
   # Raw rendering of complete object
@@ -56,12 +85,7 @@ module ApplicationHelper
         "Created #{version.item_type.downcase}"
       when "update"
         changed_fields = meaningful_changes.keys
-        if changed_fields.length == 1
-          field = changed_fields.first
-          "#{field.humanize} changed"
-        else
-          "Updated #{changed_fields.length} fields"
-        end
+          "Updated #{changed_fields.length} fields from #{version.item_type.downcase}: #{changed_fields.join(', ')}"
       when "destroy"
         "Deleted #{version.item_type.downcase}"
       else

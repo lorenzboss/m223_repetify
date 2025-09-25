@@ -25,18 +25,18 @@
         </div>
       <% else %>
         <!-- Language Cards -->
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
           <% @vocabularies_by_language.each do |language, stats| %>
             <div class="col-md-6">
               <div class="card h-100 shadow-sm border-0" style="transition: transform 0.2s;">
-                <div class="card-body p-4">
+                <div class="card-body p-3">
                   <div class="d-flex align-items-center mb-3">
                     <div class="rounded-circle bg-primary bg-opacity-10 me-3 d-flex justify-content-center align-items-center" style="height: 52px; width: 52px;">
                       <i class="bi bi-flag text-primary d-block" style="font-size: 1.5rem;"></i>
                     </div>
                     <div>
                       <h5 class="card-title mb-1 fw-bold"><%= @language_names[language] %></h5>
-                      <small class="text-muted"><%= pluralize(stats[:total], 'Vokabel', 'Vokabeln') %> insgesamt</small>
+                      <small class="text-muted"><%= pluralize(stats[:total], 'Vokabel', 'Vokabeln') %></small>
                     </div>
                   </div>
 
@@ -99,8 +99,8 @@
         <!-- Back to Vocabularies -->
         <div class="text-center mt-5">
           <%= link_to vocabularies_path, class: "btn btn-outline-secondary" do %>
-            <i class="bi bi-arrow-left me-2"></i>
-            Zurück zu meinen Vokabeln
+            <i class="bi bi-list-ul me-1"></i>
+            Vokabeln bearbeiten
           <% end %>
         </div>
       <% end %>

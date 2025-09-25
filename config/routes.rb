@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   # Admin routes
   resources :admin, only: [ :index ] do
     collection do
+      get :activity_log
       patch "users/:id/suspend", to: "admin#suspend", as: "suspend_user"
       patch "users/:id/unsuspend", to: "admin#unsuspend", as: "unsuspend_user"
       patch "users/:id/make_admin", to: "admin#make_admin", as: "make_admin_user"

@@ -4,13 +4,19 @@ class AdminController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :suspend, :unsuspend, :make_admin, :remove_admin]
 
   def index
-      @users = User.order(:email)
+    @users = User.order(:email)
     @stats = {
       total_users: User.count,
       admin_users: User.admins.count,
       suspended_users: User.suspended.count,
       active_users: User.active.count
     }
+  end
+
+  def activity_log
+    @versions = PaperTrail::Version.includes(:item)
+      .order(created_at: :desc)
+      .limit(100) # Begrenze auf die letzten 100 Einträge
   end
 
   def show

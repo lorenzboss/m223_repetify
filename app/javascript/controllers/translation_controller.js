@@ -38,6 +38,9 @@ export default class extends Controller {
 
         const text = this.inputTarget.value.trim();
 
+        // Reset save button when input changes
+        this.resetSaveButton();
+
         if (text.length === 0) {
             this.clearOutput();
             return;
@@ -53,6 +56,9 @@ export default class extends Controller {
 
     handleLanguageChange() {
         this.updateSourceLanguageDisplay();
+
+        // Reset save button when language changes
+        this.resetSaveButton();
 
         // Re-translate if there's text
         const text = this.inputTarget.value.trim();
@@ -254,5 +260,14 @@ export default class extends Controller {
         this.inputTarget.value = '';
         this.clearOutput();
         this.inputTarget.focus();
+    }
+
+    resetSaveButton() {
+        if (this.saveBtnTarget) {
+            this.saveBtnTarget.disabled = true;
+            this.saveBtnTarget.innerHTML = '<i class="bi bi-floppy me-1"></i>Vokabel speichern';
+            this.saveBtnTarget.className = 'btn btn-success';
+            this.currentTranslation = null;
+        }
     }
 }

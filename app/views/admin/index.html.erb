@@ -229,6 +229,26 @@
                         <% end %>
                       <% end %>
 
+                      <!-- Email Change -->
+                      <button type="button"
+                              class="btn btn-outline-info btn-sm"
+                              data-bs-toggle="modal"
+                              data-bs-target="#changeEmailModal<%= user.id %>"
+                              title="E-Mail ändern">
+                        <i class="bi bi-envelope-at"></i>
+                      </button>
+
+                      <!-- Password Reset -->
+                      <%= link_to reset_password_user_admin_index_path(user),
+                          class: "btn btn-outline-secondary btn-sm",
+                          data: {
+                            turbo_method: :patch,
+                            confirm: "Passwort für #{user.email} zurücksetzen? Ein neues temporäres Passwort wird generiert."
+                          },
+                          title: "Passwort zurücksetzen" do %>
+                        <i class="bi bi-key"></i>
+                      <% end %>
+
                       <!-- Delete -->
                       <%= link_to delete_user_admin_index_path(user),
                           class: "btn btn-outline-danger btn-sm",
@@ -286,3 +306,57 @@
     font-size: 0.75em;
   }
 </style>
+
+<!-- Email Change Modals -->
+<% @users.each do |user| %>
+  <% unless user == current_user %>
+    <div class="modal fade" id="changeEmailModal<%= user.id %>" tabindex="-1" aria-labelledby="changeEmailModalLabel<%= user.id %>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changeEmailModalLabel<%= user.id %>">
+              <i class="bi bi-envelope-at me-2"></i>
+              E-Mail-Adresse ändern für <%= user.email %>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <%= form_with url: change_email_user_admin_index_path(user), method: :patch, local: true, class: "needs-validation", novalidate: true do |form| %>
+              <div class="mb-3">
+                <label for="new_email_<%= user.id %>" class="form-label">
+                  <i class="bi bi-envelope me-1"></i>
+                  Neue E-Mail-Adresse
+                </label>
+                <input type="email"
+                       class="form-control"
+                       id="new_email_<%= user.id %>"
+                       name="new_email"
+                       placeholder="neue@email.com"
+                       required>
+                <div class="invalid-feedback">
+                  Bitte geben Sie eine gültige E-Mail-Adresse ein.
+                </div>
+              </div>
+
+              <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Achtung:</strong> Die E-Mail-Adresse wird sofort geändert. Der Benutzer wird über die Änderung nicht automatisch benachrichtigt.
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  <i class="bi bi-x-circle me-1"></i>
+                  Abbrechen
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>
+                  E-Mail ändern
+                </button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

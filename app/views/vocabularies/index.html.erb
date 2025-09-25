@@ -110,11 +110,11 @@
                     </div>
                     <div class="modal-body">
                       <div class="mb-3">
-                        <%= form.label :source_text, "Original (#{@language_names[language]})", class: "form-label fw-bold" %>
+                        <%= form.label :source_text, "#{@language_names[language]}", class: "form-label fw-bold" %>
                         <%= form.text_field :source_text, class: "form-control" %>
                       </div>
                       <div class="mb-3">
-                        <%= form.label :target_text, "Übersetzung (Deutsch)", class: "form-label fw-bold" %>
+                        <%= form.label :target_text, "Deutsch", class: "form-label fw-bold" %>
                         <%= form.text_field :target_text, class: "form-control" %>
                       </div>
                       <div class="mb-3">
@@ -127,10 +127,6 @@
                           ], vocabulary.status),
                           {},
                           { class: "form-select" } %>
-                        <div class="form-text">
-                          <i class="bi bi-info-circle me-1"></i>
-                          Wählen Sie den aktuellen Lernfortschritt dieser Vokabel.
-                        </div>
                       </div>
                     </div>
                     <div class="modal-footer">
@@ -148,34 +144,61 @@
   </div>
 </div>
 
-<!-- JavaScript für automatisches Ausblenden der Alerts -->
+<!-- JavaScript für Modal-Backdrop Fix -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Finde alle Alerts mit data-auto-dismiss Attribut
-        const autoDismissAlerts = document.querySelectorAll('[data-auto-dismiss]');
-
-        autoDismissAlerts.forEach(function (alertElement) {
-            const delay = parseInt(alertElement.getAttribute('data-auto-dismiss'));
-
-            setTimeout(function () {
-                // Verwende Bootstrap Alert API zum sanften Ausblenden
-                const alert = new bootstrap.Alert(alertElement);
-                alert.close();
-            }, delay);
+    function cleanupModalBackdrops() {
+        // Entferne ALLE modal-backdrop Elemente
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => {
+            backdrop.remove();
         });
+
+        // Entferne modal-open Klasse vom body
+        document.body.classList.remove('modal-open');
+
+        // Setze body style zurück
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
+
+    function setupModalCleanup() {
+        // Event Listener für alle Modal-Events hinzufügen
+        document.addEventListener('hidden.bs.modal', function (event) {
+            // Nach dem Schließen eines Modals: Cleanup durchführen
+            setTimeout(cleanupModalBackdrops, 100);
+        });
+
+        // Event Listener für Modal-Öffnen
+        document.addEventListener('show.bs.modal', function (event) {
+            // Vor dem Öffnen: Alle alten Backdrops entfernen
+            cleanupModalBackdrops();
+        });
+    }
+
+    // Beim ersten Laden der Seite
+    document.addEventListener('DOMContentLoaded', function () {
+        cleanupModalBackdrops();
+        setupModalCleanup();
     });
 
-    // Auch nach Turbo-Navigation (für SPA-ähnliches Verhalten)
+    // Nach Turbo-Navigation
     document.addEventListener('turbo:load', function () {
-        const autoDismissAlerts = document.querySelectorAll('[data-auto-dismiss]');
+        cleanupModalBackdrops();
+        setupModalCleanup();
+    });
 
-        autoDismissAlerts.forEach(function (alertElement) {
-            const delay = parseInt(alertElement.getAttribute('data-auto-dismiss'));
+    // Vor Navigation: Cleanup durchführen
+    document.addEventListener('turbo:before-visit', function () {
+        cleanupModalBackdrops();
+    });
 
-            setTimeout(function () {
-                const alert = new bootstrap.Alert(alertElement);
-                alert.close();
-            }, delay);
-        });
+    // Vor dem Caching: Cleanup durchführen
+    document.addEventListener('turbo:before-cache', function () {
+        cleanupModalBackdrops();
+    });
+
+    // Bei Turbo-Fehlern: Cleanup durchführen
+    document.addEventListener('turbo:before-render', function () {
+        cleanupModalBackdrops();
     });
 </script>

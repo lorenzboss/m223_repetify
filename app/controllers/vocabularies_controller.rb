@@ -8,11 +8,23 @@ class VocabulariesController < ApplicationController
   def index
     # Get all vocabularies for current user, grouped by language
     # Only include supported languages
-    @vocabularies_by_language = current_user.vocabularies
+    all_vocabularies = current_user.vocabularies
       .where(source_language: SUPPORTED_LANGUAGES)
       .includes(:user)
-      .order(:source_language, :created_at)
-      .group_by(&:source_language)
+      .order(:source_language)
+
+    # Custom sorting: status priority (open, learning, learned) then by updated_at DESC
+    @vocabularies_by_language = all_vocabularies.group_by(&:source_language).transform_values do |vocabularies|
+      vocabularies.sort_by do |vocab|
+        status_priority = case vocab.status
+        when "open" then 1
+        when "learning" then 2
+        when "learned" then 3
+        else 4
+        end
+        [status_priority, -vocab.updated_at.to_i]
+      end
+    end
 
     # Language display names
     @language_names = {

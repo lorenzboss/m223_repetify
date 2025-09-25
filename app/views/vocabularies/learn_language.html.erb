@@ -187,85 +187,88 @@
 
 <!-- JavaScript -->
 <script>
-let currentCardIndex = 0;
-const totalCards = <%= @vocabularies.count %>;
-let completedCards = 0;
+// Wrap everything in a function to avoid global variable conflicts with Turbo
+(function() {
+  // Reset variables on each page load
+  let currentCardIndex = 0;
+  const totalCards = <%= @vocabularies.count %>;
+  let completedCards = 0;
 
-function toggleCard(vocabId) {
-  const flashcard = document.getElementById(`flashcard-${vocabId}`);
-  flashcard.classList.toggle('flipped');
-}
+  // Make functions globally accessible by attaching to window
+  window.toggleCard = function(vocabId) {
+    const flashcard = document.getElementById(`flashcard-${vocabId}`);
+    flashcard.classList.toggle('flipped');
+  };
 
-function answerCard(vocabId, correct) {
-  // Update vocabulary status via AJAX
-  fetch(`/vocabularies/update_learning_status`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-    },
-    body: JSON.stringify({
-      id: vocabId,
-      correct: correct
+  window.answerCard = function(vocabId, correct) {
+    // Update vocabulary status via AJAX
+    fetch(`/vocabularies/update_learning_status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        id: vocabId,
+        correct: correct
+      })
     })
-  })
-  .then(response => response.json())
-  .then(newStatusGerman => {
-    // Update status badge with the new German status
-    const currentWrapper = document.querySelector('.flashcard-wrapper.active');
-    const statusBadge = currentWrapper.querySelector('.status-badge');
+    .then(response => response.text())
+    .then(newStatusGerman => {
+      // Don't update the status badge visually - just let the database update happen
+      // The status should only show the initial status of each card
+      console.log(`Vocabulary ${vocabId} status updated to: ${newStatusGerman}`);
+    })
+    .catch(error => console.error('Error:', error));
 
-    if (statusBadge) {
-      statusBadge.textContent = newStatusGerman;
-      // Update badge color based on status
-      statusBadge.className = `badge status-badge ${getStatusClassFromGerman(newStatusGerman)}`;
+    // Move to next card immediately without visual status update
+    nextCard();
+  };
+
+  function nextCard() {
+    currentCardIndex++;
+    completedCards++;
+
+    // Update progress
+    updateProgress();
+
+    if (currentCardIndex >= totalCards) {
+      // Show completion screen
+      document.getElementById('flashcard-container').style.display = 'none';
+      document.getElementById('completion-screen').style.display = 'block';
+      return;
     }
-  })
-  .catch(error => console.error('Error:', error));
 
-  // Move to next card
-  nextCard();
-}
+    // Hide current card and show next
+    document.querySelectorAll('.flashcard-wrapper').forEach(wrapper => {
+      wrapper.classList.remove('active');
+    });
 
-function nextCard() {
-  currentCardIndex++;
-  completedCards++;
+    const nextWrapper = document.querySelector(`[data-index="${currentCardIndex}"]`);
+    if (nextWrapper) {
+      nextWrapper.classList.add('active');
+    }
 
-  // Update progress
-  updateProgress();
-
-  if (currentCardIndex >= totalCards) {
-    // Show completion screen
-    document.getElementById('flashcard-container').style.display = 'none';
-    document.getElementById('completion-screen').style.display = 'block';
-    return;
+    // Update card counter
+    document.getElementById('current-card').textContent = currentCardIndex + 1;
   }
 
-  // Hide current card and show next
-  document.querySelectorAll('.flashcard-wrapper').forEach(wrapper => {
-    wrapper.classList.remove('active');
-  });
-
-  const nextWrapper = document.querySelector(`[data-index="${currentCardIndex}"]`);
-  if (nextWrapper) {
-    nextWrapper.classList.add('active');
+  function updateProgress() {
+    const progressPercent = (completedCards / totalCards) * 100;
+    document.getElementById('progress-bar').style.width = progressPercent + '%';
   }
 
-  // Update card counter
-  document.getElementById('current-card').textContent = currentCardIndex + 1;
-}
-
-function updateProgress() {
-  const progressPercent = (completedCards / totalCards) * 100;
-  document.getElementById('progress-bar').style.width = progressPercent + '%';
-}
-
-function getStatusClassFromGerman(statusGerman) {
-  switch(statusGerman) {
-    case 'Offen': return 'bg-danger';
-    case 'Am Lernen': return 'bg-warning';
-    case 'Gelernt': return 'bg-success';
-    default: return 'bg-secondary';
+  function getStatusClassFromGerman(statusGerman) {
+    switch(statusGerman) {
+      case 'Offen': return 'bg-danger';
+      case 'Am Lernen': return 'bg-warning';
+      case 'Gelernt': return 'bg-success';
+      default: return 'bg-secondary';
+    }
   }
-}
+
+  // Make getStatusClassFromGerman globally accessible for answerCard
+  window.getStatusClassFromGerman = getStatusClassFromGerman;
+
+})(); // Immediately invoke to avoid global scope pollution
 </script>

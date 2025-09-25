@@ -86,7 +86,7 @@ class VocabulariesController < ApplicationController
 
   def update_learning_status
     vocabulary = current_user.vocabularies.find(params[:id])
-    correct = params[:correct] == "true"
+    correct = params[:correct] == true
 
     if correct
       # Move to next status: open -> learning -> learned
@@ -95,19 +95,23 @@ class VocabulariesController < ApplicationController
         vocabulary.update!(status: "learning")
       when "learning"
         vocabulary.update!(status: "learned")
+      # If already learned, keep it learned
+      else
+        Rails.logger.error "Status is #{vocabulary.status}, keeping unchanged"
       end
     else
-      # Wrong answer: back to open
       vocabulary.update!(status: "open")
     end
 
-    render json: {
-      status: "success",
-      new_status: vocabulary.status,
-      new_status_german: vocabulary.status_german
-    }
+    # Just send back the new status
+    render json: vocabulary.status_german
   rescue ActiveRecord::RecordNotFound
-    render json: { status: "error", message: "Vokabel nicht gefunden" }, status: 404
+    Rails.logger.error "Vocabulary not found with ID: #{params[:id]}"
+    render json: { error: "Vokabel nicht gefunden" }, status: 404
+  rescue => e
+    Rails.logger.error "Error in update_learning_status: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    render json: { error: "Ein Fehler ist aufgetreten" }, status: 500
   end
 
   def update

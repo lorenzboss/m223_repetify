@@ -210,14 +210,15 @@ function answerCard(vocabId, correct) {
     })
   })
   .then(response => response.json())
-  .then(data => {
-    if (data.status === 'success') {
-      // Update status badge
-      const statusBadges = document.querySelectorAll(`#flashcard-${vocabId} .status-badge`);
-      statusBadges.forEach(badge => {
-        badge.textContent = data.new_status_german;
-        badge.className = `badge status-badge ${getStatusClass(data.new_status)}`;
-      });
+  .then(newStatusGerman => {
+    // Update status badge with the new German status
+    const currentWrapper = document.querySelector('.flashcard-wrapper.active');
+    const statusBadge = currentWrapper.querySelector('.status-badge');
+
+    if (statusBadge) {
+      statusBadge.textContent = newStatusGerman;
+      // Update badge color based on status
+      statusBadge.className = `badge status-badge ${getStatusClassFromGerman(newStatusGerman)}`;
     }
   })
   .catch(error => console.error('Error:', error));
@@ -259,11 +260,11 @@ function updateProgress() {
   document.getElementById('progress-bar').style.width = progressPercent + '%';
 }
 
-function getStatusClass(status) {
-  switch(status) {
-    case 'open': return 'bg-danger';
-    case 'learning': return 'bg-warning';
-    case 'learned': return 'bg-success';
+function getStatusClassFromGerman(statusGerman) {
+  switch(statusGerman) {
+    case 'Offen': return 'bg-danger';
+    case 'Am Lernen': return 'bg-warning';
+    case 'Gelernt': return 'bg-success';
     default: return 'bg-secondary';
   }
 }

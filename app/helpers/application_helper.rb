@@ -25,22 +25,14 @@ module ApplicationHelper
       )
 
       formatted_lines = changes.map do |field, values|
-        old_value = values[0].nil? ? "n/a" : values[0].to_s
-        new_value = values[1].nil? ? "n/a" : values[1].to_s
+        old_value = (values[0].nil? || values[0].to_s.empty?) ? "(empty)" : values[0].to_s
+        new_value = (values[1].nil? || values[1].to_s.empty?) ? "(empty)" : values[1].to_s
 
         escaped_field = CGI.escapeHTML(field)
         escaped_old = CGI.escapeHTML(old_value)
         escaped_new = CGI.escapeHTML(new_value)
 
-        # Handle create and destroy cases where one value is nil
-        if version.event == "create"
-          "#{escaped_field}: #{escaped_new}"
-        elsif version.event == "destroy"
-          "#{escaped_field}: #{escaped_old}"
-        else # update
-          # Use an icon for the arrow, and don't escape the icon's HTML
-          "#{escaped_field}: #{escaped_old} <i class=\"bi bi-arrow-right\"></i> #{escaped_new}"
-        end
+        "#{escaped_field}: #{escaped_old} → #{escaped_new}"
       end
 
       # Join with <br> for HTML line breaks and mark as safe
@@ -69,7 +61,7 @@ module ApplicationHelper
     begin
       changes = YAML.safe_load(
         version.object_changes,
-        permitted_classes: [ Time, Date, ActiveSupport::TimeWithZone ],
+        permitted_classes: [Time, Date, ActiveSupport::TimeWithZone],
         aliases: true
       )
       return "#{version.event.upcase} #{version.item_type}" unless changes.is_a?(Hash)
@@ -85,7 +77,7 @@ module ApplicationHelper
         "Created #{version.item_type.downcase}"
       when "update"
         changed_fields = meaningful_changes.keys
-          "Updated #{changed_fields.length} fields from #{version.item_type.downcase}: #{changed_fields.join(', ')}"
+        "Updated #{changed_fields.length} fields from #{version.item_type.downcase}: #{changed_fields.join(', ')}"
       when "destroy"
         "Deleted #{version.item_type.downcase}"
       else

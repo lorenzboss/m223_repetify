@@ -35,7 +35,7 @@
 
             <!-- Status and Instructions above card -->
             <div class="mb-1 d-flex justify-content-between">
-              <span class="badge <%= vocabulary.status == 'open' ? 'bg-danger' : 'bg-warning' %> status-badge mb-2">
+              <span class="badge bg-opacity-50 text-muted <%= vocabulary.status == 'open' ? 'bg-danger' : 'bg-warning' %> status-badge mb-2">
                 <%= vocabulary.status_german %>
               </span>
               <p class="text-muted mb-0" id="instruction-<%= vocabulary.id %>">

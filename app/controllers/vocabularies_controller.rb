@@ -36,6 +36,80 @@ class VocabulariesController < ApplicationController
     }
   end
 
+  def learn
+    # Overview of learning progress by language
+    @vocabularies_by_language = {}
+    @language_names = {
+      "en" => "Englisch",
+      "fr" => "Französisch",
+      "es" => "Spanisch",
+      "pt" => "Portugiesisch",
+      "it" => "Italienisch"
+    }
+
+    SUPPORTED_LANGUAGES.each do |lang|
+      vocabularies = current_user.vocabularies.where(source_language: lang)
+      next if vocabularies.empty?
+
+      @vocabularies_by_language[lang] = {
+        total: vocabularies.count,
+        open: vocabularies.where(status: "open").count,
+        learning: vocabularies.where(status: "learning").count,
+        learned: vocabularies.where(status: "learned").count,
+        to_learn: vocabularies.where(status: %w[open learning]).count
+      }
+    end
+  end
+
+  def learn_language
+    @language = params[:language]
+    redirect_to learn_vocabularies_path, alert: "Ungültige Sprache." unless SUPPORTED_LANGUAGES.include?(@language)
+
+    @language_name = {
+      "en" => "Englisch",
+      "fr" => "Französisch",
+      "es" => "Spanisch",
+      "pt" => "Portugiesisch",
+      "it" => "Italienisch"
+    }[@language]
+
+    # Get vocabularies to learn (open and learning status only)
+    @vocabularies = current_user.vocabularies
+      .where(source_language: @language, status: %w[open learning])
+      .order(Arel.sql("RANDOM()")) # Use Arel.sql for PostgreSQL RANDOM()
+      .limit(20) # Limit to 20 cards per session
+
+    if @vocabularies.empty?
+      redirect_to learn_vocabularies_path, notice: "Keine Vokabeln zum Lernen in dieser Sprache!"
+    end
+  end
+
+  def update_learning_status
+    vocabulary = current_user.vocabularies.find(params[:id])
+    correct = params[:correct] == "true"
+
+    if correct
+      # Move to next status: open -> learning -> learned
+      case vocabulary.status
+      when "open"
+        vocabulary.update!(status: "learning")
+      when "learning"
+        vocabulary.update!(status: "learned")
+      end
+    else
+      # Wrong answer: back to open
+      vocabulary.update!(status: "open")
+    end
+
+    render json: {
+      status: "success",
+      new_status: vocabulary.status,
+      new_status_german: vocabulary.status_german
+    }
+  rescue ActiveRecord::RecordNotFound
+    render json: { status: "error", message: "Vokabel nicht gefunden" }, status: 404
+  end
+
   def update
     if @vocabulary.update(vocabulary_params)
       redirect_to vocabularies_path, notice: "Vokabel wurde erfolgreich aktualisiert."

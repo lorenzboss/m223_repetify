@@ -5,6 +5,10 @@
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 fw-bold text-dark">Meine Vokabeln</h1>
+        <%= link_to learn_vocabularies_path, class: "btn btn-primary" do %>
+          <i class="bi bi-brain me-2"></i>
+          Vokabeln lernen
+        <% end %>
       </div>
 
       <!-- Check if user has any vocabularies -->

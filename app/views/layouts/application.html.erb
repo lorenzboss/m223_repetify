@@ -42,8 +42,11 @@
           <i class="bi bi-person-circle"></i>
           <%= current_user.email %>
         </span>
+        <%= link_to learn_vocabularies_path, class: "btn btn-outline-light btn-sm" do %>
+          <i class="bi bi-collection me-sm-1"></i><span class="d-none d-sm-inline">Lernen</span>
+        <% end %>
         <%= link_to vocabularies_path, class: "btn btn-outline-light btn-sm" do %>
-          <i class="bi bi-collection me-sm-1"></i><span class="d-none d-sm-inline">Vokabeln</span>
+          <i class="bi bi-highlighter me-sm-1"></i><span class="d-none d-sm-inline">Vokabeln</span>
         <% end %>
         <% if current_user.admin? %>
           <%= link_to admin_index_path, class: "btn btn-outline-light btn-sm" do %>

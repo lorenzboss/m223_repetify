@@ -8,10 +8,16 @@ Rails.application.routes.draw do
 
   # Vocabulary routes
   post "/vocabularies", to: "home#save_vocabulary"
-  resources :vocabularies, only: [:index, :update, :destroy]
+  resources :vocabularies, only: [ :index, :update, :destroy ] do
+    collection do
+      get :learn # Overview of learning progress by language
+      get :learn_language, path: "learn/:language" # Learn specific language
+      patch :update_learning_status # Update vocabulary status during learning
+    end
+  end
 
   # Admin routes
-  resources :admin, only: [:index] do
+  resources :admin, only: [ :index ] do
     collection do
       patch "users/:id/suspend", to: "admin#suspend", as: "suspend_user"
       patch "users/:id/unsuspend", to: "admin#unsuspend", as: "unsuspend_user"

@@ -4,6 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  # Associations
+  has_many :vocabularies, dependent: :destroy
+
   # Admin functionality
   scope :admins, -> { where(admin: true) }
   scope :regular_users, -> { where(admin: false) }

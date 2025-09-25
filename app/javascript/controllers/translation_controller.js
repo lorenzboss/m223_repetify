@@ -6,8 +6,10 @@ export default class extends Controller {
 
     connect() {
         this.debounceTimer = null;
+        this.currentTranslation = null; // Store current translation data
         this.updateSourceLanguageDisplay();
         this.setupClearButton();
+        this.setupSaveButton();
     }
 
     inputTargetConnected() {
@@ -22,6 +24,12 @@ export default class extends Controller {
         const clearBtn = document.getElementById('clear-btn');
         if (clearBtn) {
             clearBtn.addEventListener('click', this.clearAll.bind(this));
+        }
+    }
+
+    setupSaveButton() {
+        if (this.saveBtnTarget) {
+            this.saveBtnTarget.addEventListener('click', this.saveVocabulary.bind(this));
         }
     }
 
@@ -100,6 +108,13 @@ export default class extends Controller {
                 throw new Error(data.error);
             }
 
+            // Store current translation data for saving
+            this.currentTranslation = {
+                source_text: text,
+                target_text: data.translated_text,
+                source_language: data.source_language || data.detected_language
+            };
+
             this.displayTranslation(data);
             this.inputStatusTarget.textContent = `${text.length} Zeichen eingegeben`;
 
@@ -118,6 +133,7 @@ export default class extends Controller {
         </div>
       `;
             this.translationStatusTarget.textContent = 'Fehler bei der Übersetzung';
+            this.currentTranslation = null;
         }
     }
 
@@ -135,6 +151,74 @@ export default class extends Controller {
 
         this.translationStatusTarget.textContent = statusText;
         this.saveBtnTarget.disabled = false;
+    }
+
+    async saveVocabulary() {
+        if (!this.currentTranslation) {
+            alert('Keine Übersetzung zum Speichern verfügbar');
+            return;
+        }
+
+        // Disable save button during request
+        this.saveBtnTarget.disabled = true;
+        this.saveBtnTarget.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Speichere...';
+
+        try {
+            const response = await fetch('/vocabularies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(this.currentTranslation)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Show success message
+                this.showMessage(data.message, 'success');
+
+                // Keep button disabled after successful save
+                this.saveBtnTarget.innerHTML = '<i class="bi bi-check me-1"></i>Gespeichert';
+                this.saveBtnTarget.className = 'btn btn-outline-success';
+            } else {
+                // Show error message
+                this.showMessage(data.message || data.error, 'warning');
+
+                // Re-enable button
+                this.saveBtnTarget.disabled = false;
+                this.saveBtnTarget.innerHTML = '<i class="bi bi-floppy me-1"></i>Vokabel speichern';
+            }
+        } catch (error) {
+            console.error('Save error:', error);
+            this.showMessage('Fehler beim Speichern der Vokabel', 'danger');
+
+            // Re-enable button
+            this.saveBtnTarget.disabled = false;
+            this.saveBtnTarget.innerHTML = '<i class="bi bi-floppy me-1"></i>Vokabel speichern';
+        }
+    }
+
+    showMessage(message, type) {
+        // Create and show a temporary alert message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        // Insert after the card
+        const card = document.querySelector('.card');
+        card.parentNode.insertBefore(alertDiv, card.nextSibling);
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
     }
 
     updateDetectedLanguage(detectedLanguage) {
@@ -155,6 +239,9 @@ export default class extends Controller {
         this.inputStatusTarget.textContent = '';
         this.translationStatusTarget.textContent = '';
         this.saveBtnTarget.disabled = true;
+        this.saveBtnTarget.innerHTML = '<i class="bi bi-floppy me-1"></i>Vokabel speichern';
+        this.saveBtnTarget.className = 'btn btn-success';
+        this.currentTranslation = null;
 
         // Reset badge if auto-detection
         if (!this.sourceLanguageTarget.value) {

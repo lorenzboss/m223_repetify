@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # Translation route
   post "/translate", to: "home#translate"
 
+  # Vocabulary routes
+  post "/vocabularies", to: "home#save_vocabulary"
+
   # Admin routes
   resources :admin, only: [:index] do
     collection do

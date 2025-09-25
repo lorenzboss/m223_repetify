@@ -1,6 +1,9 @@
 class Vocabulary < ApplicationRecord
   belongs_to :user
 
+  # Enable PaperTrail activity tracking
+  has_paper_trail
+
   # Validations
   validates :source_text, presence: true, length: { maximum: 1000 }
   validates :target_text, presence: true, length: { maximum: 1000 }

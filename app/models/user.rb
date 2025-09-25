@@ -4,6 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  # Enable PaperTrail activity tracking
+  has_paper_trail
+
   # Associations
   has_many :vocabularies, dependent: :destroy
 

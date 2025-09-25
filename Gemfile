@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+gem 'paper_trail', '~> 15.0'  # aktuellste Hauptversion (Stand 2025)
+
 # Authentication
 gem "devise"
 

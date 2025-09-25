@@ -1,0 +1,181 @@
+<!-- app/views/vocabularies/index.html.erb -->
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 fw-bold text-dark">Meine Vokabeln</h1>
+      </div>
+
+      <!-- Check if user has any vocabularies -->
+      <% if @vocabularies_by_language.empty? %>
+        <div class="card shadow-sm border-0">
+          <div class="card-body text-center py-5">
+            <i class="bi bi-book text-muted" style="font-size: 3rem;"></i>
+            <h4 class="text-muted mt-3">Noch keine Vokabeln gespeichert</h4>
+            <p class="text-muted mb-4">Beginne mit dem Übersetzen und Speichern deiner ersten Vokabeln!</p>
+            <%= link_to root_path, class: "btn btn-primary btn-lg" do %>
+              <i class="bi bi-translate me-2"></i>
+              Jetzt übersetzen
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <!-- Vocabulary Lists by Language -->
+        <% @vocabularies_by_language.each do |language, vocabularies| %>
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">
+                  <i class="bi bi-flag me-2"></i>
+                  <%= @language_names[language] %>
+                </h5>
+                <span class="badge bg-light text-primary">
+                  <%= pluralize(vocabularies.count, 'Vokabel', 'Vokabeln') %>
+                </span>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                  <tr>
+                    <th scope="col" style="width: 25%;">Original</th>
+                    <th scope="col" style="width: 25%;">Deutsch</th>
+                    <th scope="col" style="width: 15%;">Status</th>
+                    <th scope="col" style="width: 15%;">Aktionen</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <% vocabularies.each do |vocabulary| %>
+                    <tr id="vocabulary-<%= vocabulary.id %>">
+                      <td>
+                        <div class="fw-medium text-dark">
+                          <%= vocabulary.source_text %>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="text-muted">
+                          <%= vocabulary.target_text %>
+                        </div>
+                      </td>
+                      <td>
+                        <% case vocabulary.status %>
+                        <% when 'open' %>
+                          <span class="badge bg-warning text-dark">Offen</span>
+                        <% when 'learning' %>
+                          <span class="badge bg-info">Am Lernen</span>
+                        <% when 'learned' %>
+                          <span class="badge bg-success">Gelernt</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                          <!-- Edit Button -->
+                          <button type="button" class="btn btn-outline-primary btn-sm"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#editModal<%= vocabulary.id %>">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+
+                          <!-- Delete Button -->
+                          <%= link_to vocabulary_path(vocabulary),
+                            method: :delete,
+                            data: {
+                              confirm: 'Sind Sie sicher, dass Sie diese Vokabel löschen möchten?',
+                              turbo_method: :delete
+                            },
+                            class: "btn btn-outline-danger btn-sm" do %>
+                            <i class="bi bi-trash"></i>
+                          <% end %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Modals for each vocabulary -->
+          <% vocabularies.each do |vocabulary| %>
+            <div class="modal fade" id="editModal<%= vocabulary.id %>" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <%= form_with model: vocabulary, local: true do |form| %>
+                    <div class="modal-header">
+                      <h5 class="modal-title">Vokabel bearbeiten</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <%= form.label :source_text, "Original (#{@language_names[language]})", class: "form-label fw-bold" %>
+                        <%= form.text_field :source_text, class: "form-control" %>
+                      </div>
+                      <div class="mb-3">
+                        <%= form.label :target_text, "Übersetzung (Deutsch)", class: "form-label fw-bold" %>
+                        <%= form.text_field :target_text, class: "form-control" %>
+                      </div>
+                      <div class="mb-3">
+                        <%= form.label :status, "Lernstatus", class: "form-label fw-bold" %>
+                        <%= form.select :status,
+                          options_for_select([
+                            ['Offen', 'open'],
+                            ['Am Lernen', 'learning'],
+                            ['Gelernt', 'learned']
+                          ], vocabulary.status),
+                          {},
+                          { class: "form-select" } %>
+                        <div class="form-text">
+                          <i class="bi bi-info-circle me-1"></i>
+                          Wählen Sie den aktuellen Lernfortschritt dieser Vokabel.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                      <%= form.submit "Speichern", class: "btn btn-primary" %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript für automatisches Ausblenden der Alerts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Finde alle Alerts mit data-auto-dismiss Attribut
+        const autoDismissAlerts = document.querySelectorAll('[data-auto-dismiss]');
+
+        autoDismissAlerts.forEach(function (alertElement) {
+            const delay = parseInt(alertElement.getAttribute('data-auto-dismiss'));
+
+            setTimeout(function () {
+                // Verwende Bootstrap Alert API zum sanften Ausblenden
+                const alert = new bootstrap.Alert(alertElement);
+                alert.close();
+            }, delay);
+        });
+    });
+
+    // Auch nach Turbo-Navigation (für SPA-ähnliches Verhalten)
+    document.addEventListener('turbo:load', function () {
+        const autoDismissAlerts = document.querySelectorAll('[data-auto-dismiss]');
+
+        autoDismissAlerts.forEach(function (alertElement) {
+            const delay = parseInt(alertElement.getAttribute('data-auto-dismiss'));
+
+            setTimeout(function () {
+                const alert = new bootstrap.Alert(alertElement);
+                alert.close();
+            }, delay);
+        });
+    });
+</script>

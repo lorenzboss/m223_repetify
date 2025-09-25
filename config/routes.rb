@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   # Vocabulary routes
   post "/vocabularies", to: "home#save_vocabulary"
+  resources :vocabularies, only: [:index, :update, :destroy]
 
   # Admin routes
   resources :admin, only: [:index] do

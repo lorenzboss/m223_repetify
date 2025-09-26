@@ -59,7 +59,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "lorenzboss.com" }
+  config.action_mailer.default_url_options = { host: "repetify.lorenzboss.com" }
 
   # Configure mailer to use Resend
   config.action_mailer.delivery_method = :resend

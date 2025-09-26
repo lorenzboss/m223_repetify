@@ -48,10 +48,14 @@ Füge deine API-Keys und Datenbank-URL im geöffneten Editor hinzu:
 
 ```text
 neon:
-  database_url: postgresql://YOUR_DB_URL_HERE
+  production_database_url: postgresql://YOUR_PRODUCTION_DB_URL_HERE
+  development_database_url: postgresql://YOUR_DEVELOPMENT_DB_URL_HERE
 
 deepl:
-  api_key: YOUR_DEEPL_API_KEY_HERE
+  api_key: YOUR_DEEPL_API_KEY
+
+resend:
+  api_key: YOUR_RESEND_API_KEY
 ```
 
 Falls du die Datenbank neu erstellt hast, musst du sie migrieren:

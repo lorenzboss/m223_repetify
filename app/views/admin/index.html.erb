@@ -238,17 +238,6 @@
                         <i class="bi bi-envelope-at"></i>
                       </button>
 
-                      <!-- Password Reset -->
-                      <%= link_to reset_password_user_admin_index_path(user),
-                          class: "btn btn-outline-secondary btn-sm",
-                          data: {
-                            turbo_method: :patch,
-                            confirm: "Passwort für #{user.email} zurücksetzen? Ein neues temporäres Passwort wird generiert."
-                          },
-                          title: "Passwort zurücksetzen" do %>
-                        <i class="bi bi-key"></i>
-                      <% end %>
-
                       <!-- Delete -->
                       <%= link_to delete_user_admin_index_path(user),
                           class: "btn btn-outline-danger btn-sm",

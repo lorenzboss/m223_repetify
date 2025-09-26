@@ -1,10 +1,10 @@
 class AdminController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin!
-  before_action :set_user, only: [ :show, :edit, :update, :destroy, :suspend, :unsuspend, :make_admin, :remove_admin, :change_email, :reset_password ]
+  before_action :set_user, only: [ :show, :edit, :update, :destroy, :suspend, :unsuspend, :make_admin, :remove_admin, :change_email ]
 
   def index
-    @users = User.order(:email)
+    @users = User.order(admin: :desc, created_at: :desc)
     @stats = {
       total_users: User.count,
       admin_users: User.admins.count,
@@ -104,22 +104,6 @@ class AdminController < ApplicationController
       redirect_to admin_index_path, notice: "E-Mail-Adresse von #{old_email} wurde erfolgreich zu #{new_email} geändert."
     else
       redirect_to admin_index_path, alert: "Fehler beim Ändern der E-Mail-Adresse: #{@user.errors.full_messages.join(', ')}"
-    end
-  end
-
-  def reset_password
-    if @user == current_user
-      redirect_to admin_index_path, alert: "Du kannst dein eigenes Passwort hier nicht zurücksetzen."
-      return
-    end
-
-    # Generiere ein temporäres Passwort
-    temp_password = SecureRandom.alphanumeric(8)
-
-    if @user.update(password: temp_password, password_confirmation: temp_password)
-      redirect_to admin_index_path, notice: "Passwort für #{@user.email} wurde zurückgesetzt. Neues temporäres Passwort: #{temp_password}"
-    else
-      redirect_to admin_index_path, alert: "Fehler beim Zurücksetzen des Passworts: #{@user.errors.full_messages.join(', ')}"
     end
   end
 

@@ -25,7 +25,6 @@ Rails.application.routes.draw do
       patch "users/:id/make_admin", to: "admin#make_admin", as: "make_admin_user"
       patch "users/:id/remove_admin", to: "admin#remove_admin", as: "remove_admin_user"
       patch "users/:id/change_email", to: "admin#change_email", as: "change_email_user"
-      patch "users/:id/reset_password", to: "admin#reset_password", as: "reset_password_user"
       delete "users/:id", to: "admin#destroy", as: "delete_user"
     end
   end

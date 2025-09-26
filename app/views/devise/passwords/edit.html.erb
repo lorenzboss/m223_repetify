@@ -2,7 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-lg-6">
       <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark text-center">
+        <div class="card-header bg-primary text-white text-center">
           <h3 class="mb-0">
             <i class="bi bi-key me-2"></i>
             Neues Passwort setzen
@@ -53,13 +53,13 @@
             </div>
 
             <div class="d-grid mb-3">
-              <%= f.submit "Passwort ändern", class: "btn btn-warning" %>
+              <%= f.submit "Passwort ändern", class: "btn btn-primary btn-lg" %>
             </div>
           <% end %>
 
           <div class="text-center">
             <%= link_to "Zurück zur Anmeldung", new_user_session_path,
-              class: "btn btn-outline-secondary btn-sm" %>
+              class: "text-decoration-none" %>
           </div>
         </div>
       </div>

@@ -8,6 +8,9 @@ gem "devise"
 # HTTP requests für DeepL API
 gem "httparty"
 
+# Email delivery with Resend
+gem "resend"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.2", ">= 8.0.2.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]

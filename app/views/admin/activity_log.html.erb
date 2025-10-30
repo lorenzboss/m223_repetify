@@ -1,6 +1,4 @@
-<!-- app/views/admin/activity_log.html.erb -->
 <div class="container mt-5">
-  <!-- Page Header -->
   <div class="row mb-4">
     <div class="col-12">
       <div class="text-center">
@@ -13,7 +11,6 @@
     </div>
   </div>
 
-  <!-- Activity Timeline -->
   <div class="card shadow">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
       <h6 class="m-0 font-weight-bold text-primary">
@@ -21,67 +18,90 @@
         Letzte Aktivitäten
       </h6>
       <small class="text-muted">
-        <%= @versions.count %> Einträge gefunden
+        <%= @total_versions_count %> Einträge gefunden
       </small>
     </div>
     <div class="card-body">
       <% if @versions.any? %>
+        <div class="d-flex justify-content-between align-items-center align-items-lg-start mb-4 flex-column flex-lg-row gap-2">
+
+          <small class="text-muted text-center text-lg-start">
+            Displaying Records <%= @pagy.from %>-<%= @pagy.to %>
+          </small>
+
+          <div class="d-flex justify-content-center justify-content-lg-start">
+            <%== pagy_bootstrap_nav(@pagy) %>
+          </div>
+
+          <div class="text-center text-lg-end text-muted" style="font-size: 0.9rem">
+            <div style="width: min-content; text-wrap: nowrap"><%= @versions.first.created_at.strftime("%d.%m.%Y %H:%M") %>
+              -
+            </div>
+            <div style="width: min-content; text-wrap: nowrap"><%= @versions.last.created_at.strftime("%d.%m.%Y %H:%M") %> </div>
+          </div>
+        </div>
+
         <div class="timeline">
           <% @versions.each_with_index do |version, _| %>
             <div class="timeline-item mb-4">
-              <!-- Content -->
               <div class="flex-grow-1">
                 <div class="card border-0 shadow-sm">
                   <div class="card-body p-3">
-                    <!-- Header with Action Badge and readable summary -->
+
                     <div class="d-flex align-items-center justify-content-between mb-2">
                       <div class="d-flex align-items-center">
                           <span class="badge <%= activity_badge_class(version.event) %> me-2">
+
                             <%= version.event.upcase %>
                           </span>
                         <strong class="text-dark"><%= get_readable_change_summary(version) %></strong>
                       </div>
+
                       <small class="text-muted">
                         <%= version.created_at.strftime("%d.%m.%Y um %H:%M:%S") %>
                       </small>
                     </div>
 
-                    <!-- Details -->
+
                     <div class="mb-2">
                       <small class="text-muted d-block">
                         <i class="bi bi-tag me-1"></i>
+
                         <%= version.item_type %>
                       </small>
                       <small class="text-muted d-block">
                         <i class="bi bi-hash me-1"></i>
+
                         ID: <code><%= version.item_id %></code>
                       </small>
-                        <small class="text-muted d-block">
-                          <i class="bi bi-person me-1"></i>
-                          <% user = User.find_by(id: version.whodunnit) %>
-                          <% if user %>
-                            <%= user.email %>
-                          <% else %>
-                            SYSTEM
-                          <% end %>
-                        </small>
+                      <small class="text-muted d-block">
+                        <i class="bi bi-person me-1"></i>
+
+                        <%# Use preloaded map from controller to avoid DB calls in the view %>
+                        <% user_id = version.whodunnit.to_s.match?(/\A\d+\z/) ? version.whodunnit.to_i : nil %>
+                        <% user_email = user_id ? @version_user_emails[user_id] : nil %>
+                        <%= user_email || 'SYSTEM' %>
+                      </small>
+
                     </div>
 
-                    <!-- Expandable sections for changes and object -->
                     <div class="mt-3">
                       <% if version.object.present? %>
-                        <!-- Raw Complete Object Section -->
                         <div class="mb-2">
                           <button class="btn btn-sm btn-outline-secondary" type="button"
+
                                   data-bs-toggle="collapse"
                                   data-bs-target="#raw-object-<%= version.id %>"
                                   aria-expanded="false">
+
                             <i class="bi bi-database me-1"></i>
                             Record
                           </button>
-                          <div class="collapse mt-2" id="raw-object-<%= version.id %>">
+                          <div
+                            class="collapse mt-2" id="raw-object-<%= version.id %>">
                             <div class="card card-body bg-light p-2">
                               <h6 class="text-muted mb-2">
+
                                 <i class="bi bi-clock-history me-1"></i>
                                 Daten vor der Änderung:
                               </h6>
@@ -89,25 +109,29 @@
                             </div>
                           </div>
                         </div>
+
                       <% end %>
 
                       <% if version.object_changes.present? %>
-                        <!-- Raw Changes Section -->
                         <div>
                           <button class="btn btn-sm btn-outline-primary" type="button"
+
                                   data-bs-toggle="collapse"
                                   data-bs-target="#raw-changes-<%= version.id %>"
                                   aria-expanded="false">
+
                             <i class="bi bi-database-up me-1"></i>
                             Änderungen
                           </button>
-                          <div class="collapse mt-2" id="raw-changes-<%= version.id %>">
+                          <div class="collapse mt-2"
+                               id="raw-changes-<%= version.id %>">
                             <div class="card card-body bg-light p-2">
                               <h6 class="text-muted mb-2">
                                 <i class="bi bi-arrow-right  me-1"></i>
                                 Änderungen (vorher → nachher):
                               </h6>
                               <%= render_raw_activity_changes(version) %>
+
                             </div>
                           </div>
                         </div>
@@ -118,6 +142,10 @@
               </div>
             </div>
           <% end %>
+
+        </div>
+        <div class="d-flex justify-content-center mt-4">
+          <%== pagy_bootstrap_nav(@pagy) %>
         </div>
 
       <% else %>
@@ -131,8 +159,11 @@
   </div>
 </div>
 
-<!-- Custom Styles for Activity Log -->
 <style>
+    ul.pagination {
+        margin-bottom: 0;
+    }
+
     .timeline {
         position: relative;
     }

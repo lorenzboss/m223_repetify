@@ -14,9 +14,17 @@ class AdminController < ApplicationController
   end
 
   def activity_log
-    @versions = PaperTrail::Version.includes(:item)
+    versions_query = PaperTrail::Version.includes(:item)
       .order(created_at: :desc)
-      .limit(100) # Begrenze auf die letzten 100 Einträge
+
+    @total_versions_count = versions_query.count
+
+    @pagy, @versions = pagy(versions_query, items: 20)
+
+    # Preload user emails for the displayed versions to avoid a DB call per row in the view
+    # whodunnit is stored as a string (user id) in PaperTrail; convert to integers safely
+    user_ids = @versions.map(&:whodunnit).compact.map { |w| w.to_s.match?(/\A\d+\z/) ? w.to_i : nil }.compact.uniq
+    @version_user_emails = user_ids.any? ? User.where(id: user_ids).pluck(:id, :email).to_h : {}
   end
 
   def show

@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem "paper_trail", "~> 16.0"  # aktuellste Hauptversion (Stand 2025)
+gem "pagy" # Schnelle und einfache Seitennavigation
 
 # Authentication
 gem "devise"

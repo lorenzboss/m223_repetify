@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include Pagy::Frontend # <-- HIER HINZUFÜGEN
+
   # Activity Log Helper Methods - minimal set used in views
   def activity_badge_class(event)
     case event

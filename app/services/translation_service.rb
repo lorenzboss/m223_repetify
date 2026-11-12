@@ -16,7 +16,6 @@ class TranslationService
     uri = URI(DEEPL_API_URL)
 
     params = {
-      "auth_key" => api_key,
       "text" => text,
       "target_lang" => "DE"
     }
@@ -30,6 +29,7 @@ class TranslationService
     http.use_ssl = true
 
     request = Net::HTTP::Post.new(uri)
+    request["Authorization"] = "DeepL-Auth-Key #{api_key}"
     request.set_form_data(params)
 
     response = http.request(request)

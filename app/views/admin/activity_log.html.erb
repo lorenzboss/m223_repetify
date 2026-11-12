@@ -23,9 +23,9 @@
     </div>
     <div class="card-body">
       <% if @versions.any? %>
-        <div class="d-flex justify-content-between align-items-center align-items-lg-start mb-4 flex-column flex-lg-row gap-2">
+        <div class="activity-pagination-header d-flex justify-content-between align-items-center align-items-lg-start mb-4 flex-column flex-lg-row gap-2">
 
-          <small class="text-muted text-center text-lg-start">
+          <small class="activity-pagination-range text-muted text-center text-lg-start">
             Displaying Records <%= @pagy.from %>-<%= @pagy.to %>
           </small>
 
@@ -33,11 +33,11 @@
             <%== @pagy.series_nav(:bootstrap) %>
           </div>
 
-          <div class="text-center text-lg-end text-muted" style="font-size: 0.9rem">
-            <div style="width: min-content; text-wrap: nowrap"><%= @versions.first.created_at.strftime("%d.%m.%Y %H:%M") %>
+          <div class="activity-date-range text-center text-lg-end text-muted" style="font-size: 0.9rem">
+            <div class="activity-date-line"><%= @versions.first.created_at.strftime("%d.%m.%Y %H:%M") %>
               -
             </div>
-            <div style="width: min-content; text-wrap: nowrap"><%= @versions.last.created_at.strftime("%d.%m.%Y %H:%M") %> </div>
+            <div class="activity-date-line"><%= @versions.last.created_at.strftime("%d.%m.%Y %H:%M") %> </div>
           </div>
         </div>
 

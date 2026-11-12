@@ -1,7 +1,17 @@
+html {
+    background-color: #f8f9fa;
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+    display: none;
+}
+
 body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 main {
@@ -12,6 +22,60 @@ main {
 
 footer {
     width: 100%;
+}
+
+.pagy-bootstrap.series-nav .page-item:not(.previous):not(.next) .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    padding-inline: 0;
+}
+
+.activity-pagination-header {
+    display: grid !important;
+    grid-template-columns: minmax(10rem, 1fr) auto minmax(12rem, 1fr);
+}
+
+.activity-pagination-header .activity-pagination-range {
+    text-align: left;
+}
+
+.activity-pagination-header .activity-date-range {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 12rem;
+    justify-self: end;
+    text-align: right;
+}
+
+.activity-date-range .activity-date-line {
+    white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+    .activity-pagination-header {
+        display: flex !important;
+    }
+}
+
+.scrollbar-thumb {
+    position: fixed;
+    top: 4px;
+    right: 4px;
+    z-index: 2000;
+    width: 8px;
+    min-height: 32px;
+    border-radius: 999px;
+    background: rgba(33, 37, 41, 0.45);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.scrollbar-thumb.is-visible {
+    opacity: 1;
 }
 
 .translation-container {

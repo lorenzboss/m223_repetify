@@ -35,7 +35,7 @@
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
   <link rel="apple-touch-icon" sizes="500x500" href="/icon.png">
 </head>
-<body class="bg-light">
+<body class="bg-light" data-controller="scrollbar">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
   <div class="container ">
     <%= link_to root_path, class: "navbar-brand fw-bold mb-0" do %>
@@ -79,56 +79,56 @@
 </nav>
 
 <main>
-  <!-- Flash Messages als Toasts -->
-  <% if notice %>
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
-      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-        <div class="toast-header bg-success text-white">
-          <i class="bi bi-check-circle me-2"></i>
-          <strong class="me-auto">Erfolgreich</strong>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body">
-          <%= notice %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
-  <% if alert %>
-    <% if alert == "You need to sign in or sign up before continuing." %>
-      <!-- Toast für unauthenticated Meldung -->
+    <!-- Flash Messages als Toasts -->
+    <% if notice %>
       <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-          <div class="toast-header bg-warning text-dark">
-            <i class="bi bi-shield-lock me-2"></i>
-            <strong class="me-auto">Anmeldung erforderlich</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-          </div>
-          <div class="toast-body">
-            Bitte melde dich an, um fortzufahren.
-          </div>
-        </div>
-      </div>
-    <% else %>
-      <!-- Toast für normale Fehlermeldungen -->
-      <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-          <div class="toast-header bg-danger text-white">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            <strong class="me-auto">Fehler</strong>
+          <div class="toast-header bg-success text-white">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong class="me-auto">Erfolgreich</strong>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
           </div>
           <div class="toast-body">
-            <%= alert %>
+            <%= notice %>
           </div>
         </div>
       </div>
     <% end %>
-  <% end %>
 
-  <%= yield %>
-</main>
+    <% if alert %>
+      <% if alert == "You need to sign in or sign up before continuing." %>
+        <!-- Toast für unauthenticated Meldung -->
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+          <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="toast-header bg-warning text-dark">
+              <i class="bi bi-shield-lock me-2"></i>
+              <strong class="me-auto">Anmeldung erforderlich</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+              Bitte melde dich an, um fortzufahren.
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <!-- Toast für normale Fehlermeldungen -->
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+          <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="toast-header bg-danger text-white">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <strong class="me-auto">Fehler</strong>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+              <%= alert %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= yield %>
+  </main>
 
 <!-- Footer -->
 <footer class="bg-dark text-light py-4 mt-5">
@@ -139,6 +139,10 @@
     </small>
   </div>
 </footer>
+
+<div class="scrollbar-thumb"
+     data-scrollbar-target="thumb"
+     aria-hidden="true"></div>
 
 <!-- JavaScript für automatisches Verschwinden von Toasts -->
 <script>

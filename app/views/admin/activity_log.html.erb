@@ -30,7 +30,7 @@
           </small>
 
           <div class="d-flex justify-content-center justify-content-lg-start">
-            <%== pagy_bootstrap_nav(@pagy) %>
+            <%== @pagy.series_nav(:bootstrap) %>
           </div>
 
           <div class="text-center text-lg-end text-muted" style="font-size: 0.9rem">
@@ -145,7 +145,7 @@
 
         </div>
         <div class="d-flex justify-content-center mt-4">
-          <%== pagy_bootstrap_nav(@pagy) %>
+          <%== @pagy.series_nav(:bootstrap) %>
         </div>
 
       <% else %>

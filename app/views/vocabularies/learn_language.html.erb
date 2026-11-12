@@ -10,7 +10,7 @@
             <%= @language_name %> lernen
           </h2>
           <p class="text-muted mb-0">
-            <span id="current-card">1</span> von <%= @vocabularies.count %> Karten
+            <span id="current-card">1</span> von <%= @vocabularies.size %> Karten
           </p>
         </div>
         <div>
@@ -191,7 +191,7 @@
 (function() {
   // Reset variables on each page load
   let currentCardIndex = 0;
-  const totalCards = <%= @vocabularies.count %>;
+  const totalCards = <%= @vocabularies.size %>;
   let completedCards = 0;
 
   // Make functions globally accessible by attaching to window

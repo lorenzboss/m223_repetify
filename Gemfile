@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "paper_trail", "~> 16.0"  # aktuellste Hauptversion (Stand 2025)
+gem "paper_trail", "~> 17.0"
 gem "pagy" # Schnelle und einfache Seitennavigation
 
 # Authentication
@@ -13,7 +13,7 @@ gem "httparty"
 gem "resend"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.2", ">= 8.0.2.1"
+gem "rails", "~> 8.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record

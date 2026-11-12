@@ -19,21 +19,13 @@ class VocabulariesController < ApplicationController
     # Only include supported languages
     all_vocabularies = current_user.vocabularies
       .where(source_language: SUPPORTED_LANGUAGES)
-      .includes(:user)
-      .order(:source_language)
+      .order(
+        :source_language,
+        Arel.sql("CASE status WHEN 'open' THEN 1 WHEN 'learning' THEN 2 WHEN 'learned' THEN 3 ELSE 4 END"),
+        updated_at: :desc
+      )
 
-    # Custom sorting: status priority (open, learning, learned) then by updated_at DESC
-    @vocabularies_by_language = all_vocabularies.group_by(&:source_language).transform_values do |vocabularies|
-      vocabularies.sort_by do |vocab|
-        status_priority = case vocab.status
-        when "open" then 1
-        when "learning" then 2
-        when "learned" then 3
-        else 4
-        end
-        [status_priority, -vocab.updated_at.to_i]
-      end
-    end
+    @vocabularies_by_language = all_vocabularies.group_by(&:source_language)
 
     # Language display names
     @language_names = LANGUAGE_NAMES
@@ -41,20 +33,18 @@ class VocabulariesController < ApplicationController
 
   def learn
     # Overview of learning progress by language
-    @vocabularies_by_language = {}
     @language_names = LANGUAGE_NAMES
 
-    SUPPORTED_LANGUAGES.each do |lang|
-      vocabularies = current_user.vocabularies.where(source_language: lang)
-      next if vocabularies.empty?
+    counts = current_user.vocabularies
+      .where(source_language: SUPPORTED_LANGUAGES)
+      .group(:source_language, :status)
+      .count
 
-      @vocabularies_by_language[lang] = {
-        total: vocabularies.count,
-        open: vocabularies.where(status: "open").count,
-        learning: vocabularies.where(status: "learning").count,
-        learned: vocabularies.where(status: "learned").count,
-        to_learn: vocabularies.where(status: %w[open learning]).count
-      }
+    @vocabularies_by_language = counts.each_with_object({}) do |((language, status), count), result|
+      result[language] ||= { total: 0, open: 0, learning: 0, learned: 0, to_learn: 0 }
+      result[language][:total] += count
+      result[language][status.to_sym] = count
+      result[language][:to_learn] += count if %w[open learning].include?(status)
     end
   end
 
@@ -69,6 +59,7 @@ class VocabulariesController < ApplicationController
       .where(source_language: @language, status: %w[open learning])
       .order(Arel.sql("RANDOM()")) # Use Arel.sql for PostgreSQL RANDOM()
       .limit(20) # Limit to 20 cards per session
+      .to_a
 
     if @vocabularies.empty?
       redirect_to learn_vocabularies_path, notice: "Keine Vokabeln zum Lernen in dieser Sprache!"

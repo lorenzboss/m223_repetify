@@ -5,21 +5,20 @@ class AdminController < ApplicationController
 
   def index
     @users = User.order(admin: :desc, created_at: :desc)
+    user_counts = User.group(:admin, :suspended).count
     @stats = {
-      total_users: User.count,
-      admin_users: User.admins.count,
-      suspended_users: User.suspended.count,
-      active_users: User.active.count
+      total_users: user_counts.values.sum,
+      admin_users: user_counts.sum { |(admin, _), count| admin ? count : 0 },
+      suspended_users: user_counts.sum { |(_, suspended), count| suspended ? count : 0 },
+      active_users: user_counts.sum { |(_, suspended), count| suspended ? 0 : count }
     }
   end
 
   def activity_log
-    versions_query = PaperTrail::Version.includes(:item)
-      .order(created_at: :desc)
+    versions_query = PaperTrail::Version.order(created_at: :desc)
 
-    @total_versions_count = versions_query.count
-
-    @pagy, @versions = pagy(versions_query, items: 20)
+    @pagy, @versions = pagy(:offset, versions_query, limit: 20)
+    @total_versions_count = @pagy.count
 
     # Preload user emails for the displayed versions to avoid a DB call per row in the view
     # whodunnit is stored as a string (user id) in PaperTrail; convert to integers safely
